@@ -1,4 +1,4 @@
-package com.bank.project.ProjectBank.dto;
+package com.bank.project.ProjectBank.util;
 
 import java.util.Arrays;
 

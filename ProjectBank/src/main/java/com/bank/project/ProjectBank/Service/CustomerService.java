@@ -1,5 +1,6 @@
 package com.bank.project.ProjectBank.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.security.auth.login.AccountLockedException;
@@ -76,6 +77,7 @@ public class CustomerService
 		else throw new TransactionNotFoundException("transaction details not found");
 	}
 	
+	
 	public ResponseEntity<List<Customer>> getAllCustomers()
 	{
 		List<Customer> data = customerdao.getAllCustomer();
@@ -95,7 +97,7 @@ public class CustomerService
 			{
 				account.setAccountBalance(account.getAccountBalance()+ transaction.getTransactionAmount());
 				transaction.setAccount(account);
-				transactiondao.saveTransaction(transaction);
+				transaction.setStatus("Success");
 				return new ResponseEntity<Account>(account,HttpStatus.OK);
 			}
 			else throw new AccounNotFoundException("account object not found");
@@ -114,19 +116,60 @@ public class CustomerService
 		{
 			if(account!=null)
 			{
-				double accountBalance = account.getAccountBalance();
-				double transactionAmount = transaction.getTransactionAmount();
-				double amount = accountBalance - transactionAmount;
-				account.setAccountBalance(amount);
-				transaction.setAccount(account);
-				transactiondao.saveTransaction(transaction);
-				return new ResponseEntity<Account>(account,HttpStatus.OK);
+				if(account.getAccountBalance()>=transaction.getTransactionAmount())
+				{
+					double accountBalance = account.getAccountBalance();
+					double transactionAmount = transaction.getTransactionAmount();
+					double amount = accountBalance - transactionAmount;
+					account.setAccountBalance(amount);
+					transaction.setAccount(account);
+					transaction.setStatus("success");
+					transactiondao.saveTransaction(transaction);
+					return new ResponseEntity<Account>(account,HttpStatus.OK);
+				}
+				else throw new AccounNotFoundException("account amount is less then your amount");
 			}
 			else throw new AccounNotFoundException("account object not found");
 		}
 		else throw new CustomerNotFoundException("customer object not found");
 		
 	}
+	
+	
+	public ResponseEntity<List<Account>> AmountTranferingAnotherAccount(int FromAccount , int toAccount ,Transaction transaction)
+	{
+		Account personone = accountdao.findAccount(toAccount);
+		Account persontwo = accountdao.findAccount(FromAccount);
+		personone.getTransaction().add(transaction);
+		persontwo.getTransaction().add(transaction);
+		transaction.setSenderAccount(persontwo);
+		transaction.setReceiverAccount(personone);
+		if(personone!=null)
+		{
+			if(persontwo!=null)
+			{
+				if(persontwo.getAccountBalance()>=transaction.getTransactionAmount())
+				{
+					double accountBalance = persontwo.getAccountBalance();
+					accountBalance = accountBalance - transaction.getTransactionAmount();
+					persontwo.setAccountBalance(accountBalance);
+					
+					double accountBalance2 = personone.getAccountBalance();
+					accountBalance2 = accountBalance2+transaction.getTransactionAmount();
+					personone.setAccountBalance(accountBalance2);
+					
+					accountdao.updateAccount(FromAccount, persontwo);
+					accountdao.updateAccount(toAccount, personone);
+					
+					return new ResponseEntity<List<Account>>(Arrays.asList(personone,persontwo),HttpStatus.OK);
+				}
+				else throw new AccounNotFoundException("account amount is less then your amount");
+			}
+			else throw new AccounNotFoundException("account object not found");
+		}
+		else throw new AccounNotFoundException("account object not found");
+	}
+	
 	
 	
 	

@@ -76,4 +76,10 @@ public class CustomerController {
 	{
 		return customerservice.findByTransactionType(type);
 	}
+	
+	@PostMapping("oneAccountToAnother")
+	public ResponseEntity<List<Account>> AmounttransferoneAccountToAnotherAccount(@RequestBody Transaction transaction , @RequestParam int fromAccountNum ,@RequestParam int ToAccountNum)
+	{
+		return customerservice.AmountTranferingAnotherAccount(fromAccountNum, ToAccountNum, transaction);
+	}
 	}

@@ -46,4 +46,17 @@ public class Transaction {
 	@JsonIgnore
 	@JoinColumn(name = "account_id")
 	private Account account;
+	
+	private String status;
+
+	 @ManyToOne
+	 @JoinColumn(name = "sender_account_id")
+	 @JsonIgnore
+	 private Account senderAccount;
+
+	 @ManyToOne
+	 @JoinColumn(name = "receiver_account_id")
+	 @JsonIgnore
+	 private Account receiverAccount;
+	
 }
