@@ -54,14 +54,7 @@ public class Customer {
     @NotNull(message = "customerAddress not null")
     @NotEmpty(message = "customerAddress not empty")
     private String customerAddress;
-    @NotNull(message = "customerPassword not null")
-    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).*$", 
-            message = "Password must contain at least one digit, one lowercase and one uppercase letter")
-    @Size(min = 8, message = "Password must be at least 8 characters")
-    private String customerPassword;
-
    
-    
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Account> accounts;

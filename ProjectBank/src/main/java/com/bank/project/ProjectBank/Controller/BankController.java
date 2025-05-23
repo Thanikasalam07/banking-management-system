@@ -1,5 +1,6 @@
 package com.bank.project.ProjectBank.Controller;
 
+import java.sql.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ public class BankController {
 	}
 	
 	@GetMapping("findByBankName")
-	public ResponseEntity<Bank> findByBankNmae(@RequestParam String bankname)
+	public ResponseEntity<Bank> findByBankName(@RequestParam String bankname)
 	{
 		return bankservice.findByBankName(bankname);
 		
@@ -114,6 +115,18 @@ public class BankController {
 	public ResponseEntity<Manager> findByManagerName(@RequestParam String name)
 	{
 		return bankservice.findByManagerName(name);
+	}
+	
+	@GetMapping("calculateBranchCashFlow")
+	public ResponseEntity<Double> sumOfDepositsandWithdrawInBranch(@RequestParam int branchId)
+	{
+		return bankservice.calculateBranchCashFlow(branchId);
+	}
+	
+	@GetMapping("countNewAccountsOpenedBetween")
+	public ResponseEntity countNewAccountsOpenedBetween(@RequestParam Date startdate , @RequestParam Date enddate ,@RequestParam int branchid)
+	{
+		return bankservice.countNewAccountsOpenedBetween(startdate, enddate, branchid);
 	}
 	
 	

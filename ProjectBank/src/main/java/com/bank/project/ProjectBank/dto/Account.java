@@ -45,6 +45,24 @@ public class Account
 	@ManyToOne
 	@JsonIgnore
 	Customer customer;
+
+	public Account(int accountNumber, @Positive(message = "balance should be positive") double accountBalance,
+			@NotNull(message = "Date of birth is required") Date createdAt,
+			@NotNull(message = "accountType is not null") AccountType accountype, List<Transaction> transaction,
+			Customer customer) {
+		super();
+		this.accountNumber = accountNumber;
+		this.accountBalance = accountBalance;
+		this.createdAt = createdAt;
+		this.accountype = accountype;
+		this.transaction = transaction;
+		this.customer = customer;
+	}
+
+	public Account() {
+		super();
+	}
+	
 	  
 	
 }

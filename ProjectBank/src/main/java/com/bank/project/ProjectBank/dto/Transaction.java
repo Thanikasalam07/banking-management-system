@@ -42,12 +42,14 @@ public class Transaction {
 	@JsonFormat(pattern = "yyyy-MM-dd")
     private Date timestamp;
 	
+	private String status;
+	
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JsonIgnore
 	@JoinColumn(name = "account_id")
 	private Account account;
 	
-	private String status;
+	
 
 	 @ManyToOne
 	 @JoinColumn(name = "sender_account_id")

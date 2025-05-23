@@ -136,4 +136,10 @@ public class BranchController {
 	{
 	   return branchservice.findByAccountType(accountype);
     }
+	
+	@GetMapping("calculateBranchCashFlow")
+	public ResponseEntity<Double> sumOfDepositsandWithdrawInBranch(@RequestParam int branchId)
+	{
+		return branchservice.calculateBranchCashFlow(branchId);
+	}
 }

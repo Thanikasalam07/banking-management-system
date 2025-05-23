@@ -27,6 +27,8 @@ import com.bank.project.ProjectBank.dto.Branch;
 import com.bank.project.ProjectBank.dto.Customer;
 import com.bank.project.ProjectBank.dto.Employee;
 import com.bank.project.ProjectBank.dto.Manager;
+import com.bank.project.ProjectBank.dto.Transaction;
+import com.bank.project.ProjectBank.dto.TransactionType;
 
 @Component
 public class BranchService {
@@ -257,4 +259,43 @@ public class BranchService {
 		else throw new EmployeeNotFoundException("branch object not found");
 			
 	}
+	
+
+	public ResponseEntity<Double> calculateBranchCashFlow(int branchId) {
+		Branch branch = branchdao.findBranch(branchId);
+		double totalamount = 0;
+		if (branch != null) {
+			List<Customer> customer = branch.getCustomer();
+
+			for (Customer c : customer) {
+				List<Account> accounts = c.getAccounts();
+				for (Account a : accounts) {
+					if (a.getAccountype() == AccountType.Saving) {
+						List<Transaction> transaction = a.getTransaction();
+						for (Transaction t : transaction) {
+							if (t.getType() == TransactionType.deposit)
+								totalamount += t.getTransactionAmount();
+							else if (t.getType() == TransactionType.withdrawel)
+								totalamount -= t.getTransactionAmount();
+						}
+					} else if (a.getAccountype() == AccountType.Current) {
+						List<Transaction> transaction = a.getTransaction();
+						for (Transaction t : transaction) {
+							if (t.getType() == TransactionType.deposit)
+								totalamount += t.getTransactionAmount();
+							else if (t.getType() == TransactionType.withdrawel)
+								totalamount -= t.getTransactionAmount();
+						}
+					}
+
+				}
+
+			}
+
+			return new ResponseEntity<Double>(totalamount, HttpStatus.OK);
+
+		} else
+			throw new BranchNotFoundException("branch object not found");
+	}
+
 }
