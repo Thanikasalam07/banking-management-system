@@ -14,11 +14,12 @@ public class TransactionService {
 
 	@Autowired
 	Transactiondao transactiondao;
-	
-	public ResponseEntity<Transaction> findById(int id)
-	{
+
+	public ResponseEntity<Transaction> findById(int id) {
 		Transaction data = transactiondao.findTransaction(id);
-		if(data!=null) return new ResponseEntity<Transaction>(data,HttpStatus.FOUND);
-		else throw new TransactionNotFoundException("transaction object not found");
+		if (data != null)
+			return new ResponseEntity<Transaction>(data, HttpStatus.FOUND);
+		else
+			throw new TransactionNotFoundException("transaction object not found");
 	}
 }

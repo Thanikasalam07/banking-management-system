@@ -22,7 +22,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Bank {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int bankId;
@@ -35,11 +35,11 @@ public class Bank {
 	@NotEmpty(message = "headoffice not empty")
 	@NotNull(message = "headoffice not null")
 	private String headquartersAddress;
-	@Min(value = 6000000000l,message = "invalid contact") 
-	@Max(value = 9999999999l,message = "invalid contact")
+	@Min(value = 6000000000l, message = "invalid contact")
+	@Max(value = 9999999999l, message = "invalid contact")
 	private long bankContactNumber;
-	
-	@OneToMany(cascade = CascadeType.ALL)
+
+	@OneToMany(mappedBy = "bank", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Branch> branch;
 
 }

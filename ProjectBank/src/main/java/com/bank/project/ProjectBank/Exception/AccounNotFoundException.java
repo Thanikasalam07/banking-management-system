@@ -3,7 +3,7 @@ package com.bank.project.ProjectBank.Exception;
 import lombok.Getter;
 
 @Getter
-public class AccounNotFoundException extends RuntimeException{
+public class AccounNotFoundException extends RuntimeException {
 
 	String message;
 
@@ -11,7 +11,5 @@ public class AccounNotFoundException extends RuntimeException{
 		super();
 		this.message = message;
 	}
-	
-	
-	
+
 }

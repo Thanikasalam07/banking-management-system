@@ -2,6 +2,7 @@ package com.bank.project.ProjectBank.dto;
 
 import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -24,41 +25,36 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Transaction {
-	
-	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int transactionId;
-	@NotNull(message = "fromAccount not null")
-	@NotEmpty(message = "fromAccount not empty")
-	private String fromAccount;
-	@NotNull(message = "toAccount not null")
-	@NotEmpty(message = "toAccount not empty")
-	private String toAccount;
-	@NotNull(message = "transactiontype is not null")
-	private TransactionType type;
-	@Positive(message = "transactionAmount should be positive")
-	private double transactionAmount;
-	@NotNull(message = "LocalDateTime of birth is required")
-	@JsonFormat(pattern = "yyyy-MM-dd")
-    private Date timestamp;
-	
-	private String status;
-	
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JsonIgnore
-	@JoinColumn(name = "account_id")
-	private Account account;
-	
+
 	
 
-	 @ManyToOne
-	 @JoinColumn(name = "sender_account_id")
-	 @JsonIgnore
-	 private Account senderAccount;
+	    @Id
+	    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	    private int transactionId;
 
-	 @ManyToOne
-	 @JoinColumn(name = "receiver_account_id")
-	 @JsonIgnore
-	 private Account receiverAccount;
+	   
+	    @NotEmpty(message = "senderAccount not empty")
+	    @NotNull(message = "senderAccount not null")
+	    private String senderAccount; 
+
+	    @NotEmpty(message = "receiverAccount not empty")
+	    @NotNull(message = "receiverAccount not null")
+	    private String receiverAccount; 
+
+	    @NotNull(message = "Transaction type is required")
+	    private TransactionType type; 
+
+	    @Positive(message = "Transaction amount must be positive")
+	    private double transactionAmount;
+
+	    @NotNull
+	    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+	    private LocalDateTime timestamp = LocalDateTime.now(); 
+
+	    private String status;
+	
+     
+	    
+
 	
 }

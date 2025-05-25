@@ -1,7 +1,8 @@
 package com.bank.project.ProjectBank.dto;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
-import java.util.Date;
+
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -24,8 +25,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Account 
-{
+public class Account {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int accountNumber;
@@ -36,15 +36,20 @@ public class Account
 	private Date createdAt;
 	@NotNull(message = "accountType is not null")
 	private AccountType accountype;
-	
-	
-	@OneToMany(cascade  = CascadeType.ALL)
+
+	@OneToMany(cascade = CascadeType.ALL)
 	@JsonIgnore
 	private List<Transaction> transaction;
 
 	@ManyToOne
 	@JsonIgnore
 	Customer customer;
+	
+	@OneToMany(mappedBy = "senderAccount")
+	private List<Transaction> sentTransactions;
+
+	@OneToMany(mappedBy = "receiverAccount")
+	private List<Transaction> receivedTransactions;
 
 	public Account(int accountNumber, @Positive(message = "balance should be positive") double accountBalance,
 			@NotNull(message = "Date of birth is required") Date createdAt,
@@ -62,7 +67,5 @@ public class Account
 	public Account() {
 		super();
 	}
-	
-	  
-	
+
 }

@@ -6,7 +6,6 @@ import org.springframework.stereotype.Component;
 import com.bank.project.ProjectBank.dto.Employee;
 
 @Component
-public interface EmployeeRepository  extends JpaRepository<Employee, Integer>{
+public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
-	
 }

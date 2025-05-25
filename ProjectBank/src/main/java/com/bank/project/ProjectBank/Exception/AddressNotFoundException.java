@@ -3,7 +3,7 @@ package com.bank.project.ProjectBank.Exception;
 import lombok.Getter;
 
 @Getter
-public class AddressNotFoundException extends RuntimeException{
+public class AddressNotFoundException extends RuntimeException {
 
 	String message;
 
@@ -11,6 +11,5 @@ public class AddressNotFoundException extends RuntimeException{
 		super();
 		this.message = message;
 	}
-	
-	
+
 }

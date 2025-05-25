@@ -15,9 +15,8 @@ public class TransactionController {
 
 	@Autowired
 	TransactionService service;
-	
-	public ResponseEntity<Transaction> findTransaction(@RequestParam int id)
-	{
+
+	public ResponseEntity<Transaction> findTransaction(@RequestParam int id) {
 		return service.findById(id);
 	}
 }

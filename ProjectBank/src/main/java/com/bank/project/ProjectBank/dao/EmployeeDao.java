@@ -11,49 +11,47 @@ import com.bank.project.ProjectBank.dto.Employee;
 
 @Repository
 public class EmployeeDao {
-	
+
 	@Autowired
 	EmployeeRepository employeerepo;
-	
-	public Employee saveEmployee(Employee employee)
-	{
-		 return employeerepo.save(employee);
+
+	public Employee saveEmployee(Employee employee) {
+		return employeerepo.save(employee);
 	}
 
-	public Employee findEmployeebyId(int id)
-	{
-	   Optional<Employee> data = employeerepo.findById(id);
-	   if(data.isPresent()) 
-		return data.get();
-	   else return null;
+	public Employee findEmployeebyId(int id) {
+		Optional<Employee> data = employeerepo.findById(id);
+		if (data.isPresent())
+			return data.get();
+		else
+			return null;
 
 	}
-	
-	public Employee deleteEmployee(int id)
-	{
+
+	public Employee deleteEmployee(int id) {
 		Employee data = findEmployeebyId(id);
-		if(data!=null) {
+		if (data != null) {
 			employeerepo.delete(data);
-		return data;}
-		else return null;
+			return data;
+		} else
+			return null;
 	}
-	
-	public Employee updateEmployee(int id , Employee employee)
-	{
+
+	public Employee updateEmployee(int id, Employee employee) {
 		Employee data = findEmployeebyId(id);
-		if(data!=null)
-		{
+		if (data != null) {
 			employee.setEmployeeId(id);
 			Employee save = employeerepo.save(employee);
 			return save;
-		}
-		else return null;		
+		} else
+			return null;
 	}
-	
-	public List<Employee> getAllEmployee()
-	{
+
+	public List<Employee> getAllEmployee() {
 		List<Employee> data = employeerepo.findAll();
-		if(data!=null) return data;
-		else return null;
+		if (data != null)
+			return data;
+		else
+			return null;
 	}
 }

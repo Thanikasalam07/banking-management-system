@@ -13,7 +13,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Address {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int addressId;
@@ -22,7 +22,7 @@ public class Address {
 	private String street;
 	@NotNull(message = "city not null")
 	@NotEmpty(message = "city not empty")
-	private  String city;
+	private String city;
 	@NotNull(message = "state not null")
 	@NotEmpty(message = "state not empty")
 	private String state;
@@ -32,6 +32,5 @@ public class Address {
 	@NotNull(message = "country not null")
 	@NotEmpty(message = "country not empty")
 	private String country;
-	
 
 }

@@ -15,45 +15,46 @@ public class Transactiondao {
 
 	@Autowired
 	TransactionRepository transactionrepo;
-	
-	public Transaction saveTransaction(Transaction transaction)
-	{
+
+	public Transaction saveTransaction(Transaction transaction) {
 		Transaction data = transactionrepo.save(transaction);
-		if(data!=null) return data;
-		else return null;
+		if (data != null)
+			return data;
+		else
+			return null;
 	}
-	
-	public Transaction findTransaction(int id)
-	{
+
+	public Transaction findTransaction(int id) {
 		Optional<Transaction> data = transactionrepo.findById(id);
-		if(data.isPresent())
+		if (data.isPresent())
 			return data.get();
-		else return null;
+		else
+			return null;
 	}
-	
-	public Transaction deleteTransaction(int id)
-	{
+
+	public Transaction deleteTransaction(int id) {
 		Transaction data = findTransaction(id);
-		if(data!=null) {transactionrepo.delete(data);
-		return data;}
-		else return null;
+		if (data != null) {
+			transactionrepo.delete(data);
+			return data;
+		} else
+			return null;
 	}
-	
-	public Transaction updateTransaction(int id,Transaction transaction)
-	{
+
+	public Transaction updateTransaction(int id, Transaction transaction) {
 		Transaction data = findTransaction(id);
-		if(data!=null)
-		{
+		if (data != null) {
 			transaction.setTransactionId(id);
 			return transactionrepo.save(transaction);
 		}
 		return null;
 	}
-	
-	public List<Transaction> findByTransactionType(TransactionType type)
-	{
+
+	public List<Transaction> findByTransactionType(TransactionType type) {
 		List<Transaction> data = transactionrepo.findByTransactionType(type);
-		if(data!=null) return data;
-		else return null;
+		if (data != null)
+			return data;
+		else
+			return null;
 	}
 }

@@ -25,7 +25,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Branch {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int branchId;
@@ -35,8 +35,8 @@ public class Branch {
 	@NotNull(message = "ifsccode not null")
 	@NotEmpty(message = "ifsccode not empty")
 	private String ifsccode;
-	@Min(value = 6000000000l,message = "invalid contact") 
-	@Max(value = 9999999999l,message = "invalid contact")
+	@Min(value = 6000000000l, message = "invalid contact")
+	@Max(value = 9999999999l, message = "invalid contact")
 	private long branchcontact;
 	@NotNull(message = "city not null")
 	@NotEmpty(message = "city not empty")

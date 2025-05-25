@@ -14,55 +14,51 @@ public class Branchdao {
 
 	@Autowired
 	BranchRepository branchrepo;
-	
-	public Branch saveBranch(Branch branch)
-	{
+
+	public Branch saveBranch(Branch branch) {
 		Branch save = branchrepo.save(branch);
-		if(save!=null) return save;
+		if (save != null)
+			return save;
 		return null;
 	}
-	
-	public Branch findBranch(int id)
-	{
+
+	public Branch findBranch(int id) {
 		Optional<Branch> data = branchrepo.findById(id);
-		if(data.isPresent())
+		if (data.isPresent())
 			return data.get();
-		else return null;	
-	}
-	
-	public Branch updateBranch(int id,Branch branch)
-	{
-		Branch data = findBranch(id);
-		if(data!=null)
-		{
-			branch.setBranchId(id);
-			return branchrepo.save(branch);
-		}
-		else return null;
-	}
-	
-	public Branch deleteBranch(int id)
-	{
-		Branch data = findBranch(id);
-		if(data!=null) {
-			branchrepo.delete(data);
-			return data;
-		}
-		else return null;
-		
-		
-	}
-	
-	public List<Branch> getAllBranches()
-	{
-	   List<Branch> data = branchrepo.findAll();
-	   
-	   if(data!=null) return data;
-	   else return null;
+		else
+			return null;
 	}
 
-	public Branch findByBranchName(String branchname)
-	{
+	public Branch updateBranch(int id, Branch branch) {
+		Branch data = findBranch(id);
+		if (data != null) {
+			branch.setBranchId(id);
+			return branchrepo.save(branch);
+		} else
+			return null;
+	}
+
+	public Branch deleteBranch(int id) {
+		Branch data = findBranch(id);
+		if (data != null) {
+			branchrepo.delete(data);
+			return data;
+		} else
+			return null;
+
+	}
+
+	public List<Branch> getAllBranches() {
+		List<Branch> data = branchrepo.findAll();
+
+		if (data != null)
+			return data;
+		else
+			return null;
+	}
+
+	public Branch findByBranchName(String branchname) {
 		return branchrepo.findByBranchName(branchname);
 	}
 }

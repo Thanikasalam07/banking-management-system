@@ -20,9 +20,8 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Manager 
-{
-	
+public class Manager {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int managerId;
@@ -32,14 +31,13 @@ public class Manager
 	@NotNull(message = "managerEmail not null")
 	@NotEmpty(message = "managerEmail not empty")
 	private String managerEmail;
-	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).*$", 
-	            message = "Password must contain at least one digit, one lowercase and one uppercase letter")
+	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z]).*$", message = "Password must contain at least one digit, one lowercase and one uppercase letter")
 	@Size(min = 8, message = "Password must be at least 8 characters")
 	@NotNull(message = "managerPassword not null")
 	private String managerPassword;
 	@NotNull(message = "managerContact not null")
-	@Min(value = 6000000000l,message = "invalid contact") 
-    @Max(value = 9999999999l,message = "invalid contact")
+	@Min(value = 6000000000l, message = "invalid contact")
+	@Max(value = 9999999999l, message = "invalid contact")
 	private Long managerContact;
 
 	@OneToOne

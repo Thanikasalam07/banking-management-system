@@ -1,18 +1,26 @@
 package com.bank.project.ProjectBank.Service;
 
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.bank.project.ProjectBank.Exception.BankNotFoundException;
 import com.bank.project.ProjectBank.Exception.BranchNotFoundException;
 import com.bank.project.ProjectBank.Exception.ManagerNotFoundException;
+import com.bank.project.ProjectBank.dao.Accountdao;
 import com.bank.project.ProjectBank.dao.Bankdao;
 import com.bank.project.ProjectBank.dao.Branchdao;
 import com.bank.project.ProjectBank.dao.Managerdao;
@@ -39,6 +47,9 @@ public class BankService {
 
 	@Autowired
 	Managerdao managerdao;
+	
+	@Autowired
+	Accountdao accountdao;
 
 	public ResponseEntity<Bank> saveBank(Bank bank) {
 		Bank data = bankdao.saveBank(bank);
@@ -56,11 +67,17 @@ public class BankService {
 			throw new BankNotFoundException("bank object not found");
 	}
 
-	public ResponseEntity<Bank> updateBank(int it, Bank bank) {
-		Bank data = bankdao.updateBank(it, bank);
-		if (data != null)
-			return new ResponseEntity<Bank>(data, HttpStatus.OK);
-		else
+	public ResponseEntity<Bank> updateBank(int id, Bank bank) {
+		Bank bank2 = bankdao.findBank(id);
+
+		if (bank2 != null) {
+			List<Branch> branchdata = bank2.getBranch();
+			bank.setBranch(branchdata);
+			bank.setBankId(id);
+			Bank updateBank = bankdao.updateBank(id, bank);
+
+			return new ResponseEntity<Bank>(updateBank, HttpStatus.OK);
+		} else
 			throw new BankNotFoundException("bank object not modified");
 	}
 
@@ -234,43 +251,183 @@ public class BankService {
 			throw new BranchNotFoundException("branch object not found");
 	}
 
-	public ResponseEntity countNewAccountsOpenedBetween(Date startdate, Date enddate,
-			int branchId) {
+	public ResponseEntity countNewAccountsOpenedBetween(Date startdate, Date enddate, int branchId) {
 		Branch branch = branchdao.findBranch(branchId);
 		List<Account> newdata = new ArrayList<Account>();
 		int accountcount = 0;
 		if (branch != null) {
-			
+
 			List<Customer> customer = branch.getCustomer();
-			for(Customer c:customer) {
+			for (Customer c : customer) {
 				List<Account> gettingaccounts = c.getAccounts();
-				for(Account a:gettingaccounts)
-				{
-					if(!a.getCreatedAt().before(startdate) && !a.getCreatedAt().after(enddate))
-					{
-						Account account = new Account(a.getAccountNumber(),a.getAccountBalance(), a.getCreatedAt(), a.getAccountype(), a.getTransaction()
-								, a.getCustomer());
+				for (Account a : gettingaccounts) {
+					if (!a.getCreatedAt().before(startdate) && !a.getCreatedAt().after(enddate)) {
+						Account account = new Account(a.getAccountNumber(), a.getAccountBalance(), a.getCreatedAt(),
+								a.getAccountype(), a.getTransaction(), a.getCustomer());
 						newdata.add(account);
 						accountcount++;
-						
+
 					}
 				}
 			}
-			
-		  branchResponse res = new branchResponse();
-		  res.setCount(accountcount);
-		  res.setAccountsdata(newdata);
-          return new ResponseEntity(res,HttpStatus.OK);
+
+			accountResponse res = new accountResponse();
+			res.setCount(accountcount);
+			res.setAccountsdata(newdata);
+			return new ResponseEntity(res, HttpStatus.OK);
 		} else
 			throw new BranchNotFoundException("branch object is not found");
 	}
 
+	public ResponseEntity<Double> getTotalDepositsByBranch(int branchId) {
+		Branch branch = branchdao.findBranch(branchId);
+		double totaldepositamount = 0;
+		if (branch != null) {
+			List<Customer> customer = branch.getCustomer();
+			for (Customer c : customer) {
+				List<Account> accounts = c.getAccounts();
+				for (Account a : accounts) {
+					List<Transaction> transaction = a.getTransaction();
+					for (Transaction t : transaction) {
+						if (t.getType() == TransactionType.deposit)
+							totaldepositamount += t.getTransactionAmount();
+					}
+				}
+			}
+
+			return new ResponseEntity<Double>(totaldepositamount, HttpStatus.OK);
+		} else
+			throw new BranchNotFoundException("branch object not found");
+	}
+
+	public ResponseEntity<Double> getTotalWithdrawalsByBranch(int branchId) {
+		Branch branch = branchdao.findBranch(branchId);
+		double totalwithdrawamount = 0;
+		if (branch != null) {
+			List<Customer> customer = branch.getCustomer();
+			for (Customer c : customer) {
+				List<Account> accounts = c.getAccounts();
+				for (Account a : accounts) {
+					List<Transaction> transaction = a.getTransaction();
+					for (Transaction t : transaction) {
+						if (t.getType() == TransactionType.withdrawel)
+							totalwithdrawamount += t.getTransactionAmount();
+					}
+				}
+			}
+			return new ResponseEntity<Double>(totalwithdrawamount, HttpStatus.OK);
+		} else
+			throw new BranchNotFoundException("branch object not found");
+
+	}
+
+	public ResponseEntity getNumberOfTransactionsByBranch(int brachId) {
+		Branch branch = branchdao.findBranch(brachId);
+		List<Transaction> newdatatransaction = new ArrayList<Transaction>();
+		int transactioncount = 0;
+		if (branch != null) {
+
+			List<Customer> customer = branch.getCustomer();
+			for (Customer c : customer) {
+				List<Account> accounts = c.getAccounts();
+				for (Account a : accounts) {
+					List<Transaction> transaction = a.getTransaction();
+					for (Transaction t : transaction) {
+						newdatatransaction.add(t);
+						transactioncount++;
+					}
+				}
+			}
+			transactionresponse f = new transactionresponse();
+			f.setCount(transactioncount);
+			f.setTransactions(newdatatransaction);
+
+			return new ResponseEntity(f, HttpStatus.OK);
+		} else
+			throw new BranchNotFoundException("branch object not found");
+	}
+
+	public ResponseEntity getTotalDepositsBetweenDates(LocalDateTime startdate, LocalDateTime enddate, int branchId) {
+		Branch branch = branchdao.findBranch(branchId);
+		List<Transaction> deposittransactions = new ArrayList<Transaction>();
+		int transactioncount = 0;
+
+		if (branch != null) {
+			List<Customer> customer = branch.getCustomer();
+			for (Customer c : customer) {
+				List<Account> accounts = c.getAccounts();
+				for (Account a : accounts) {
+					List<Transaction> transaction = a.getTransaction();
+					for (Transaction t : transaction) {
+						if (t.getType() == TransactionType.deposit && !t.getTimestamp().isBefore(startdate)
+								&& !t.getTimestamp().isAfter(enddate)) {
+							transactioncount++;
+							deposittransactions.add(t);
+						}
+					}
+				}
+			}
+
+		    transactionresponse data = new transactionresponse();
+			data.setCount(transactioncount);
+			data.setTransactions(deposittransactions);
+
+			return new ResponseEntity(data, HttpStatus.OK);
+		} else
+			throw new BranchNotFoundException("branch object not found");
+	}
+
+	
+	public ResponseEntity accountsOpenedInSingleDay(int branchId ,Date date)
+	{
+		Branch branch = branchdao.findBranch(branchId);
+		List<Account> newdata = new ArrayList<Account>();
+		int accountcount =0;
+		if(branch!=null) 
+		{
+			List<Customer> customer = branch.getCustomer();
+			for(Customer c:customer)
+			{
+				List<Account> accounts = c.getAccounts();
+				for(Account a:accounts)
+				{    
+				    
+					
+					if(a.getCreatedAt().equals(date))
+					{
+						newdata.add(a);
+						accountcount++;
+					}
+				}
+			}
+			
+			accountResponse a = new accountResponse();
+			a.setAccountsdata(newdata);
+			a.setCount(accountcount);
+			
+			return new ResponseEntity(a,HttpStatus.OK);
+		}
+		else throw new BranchNotFoundException("branch object not found(check the branch id)");
+	}
+	
+	
+	
+	
+	
+	
 	
 	@Getter
 	@Setter
-	public class branchResponse{
-		
+	public class accountResponse {
+
 		Integer count;
 		List<Account> accountsdata;
+	}
+
+	@Getter
+	@Setter
+	public class  transactionresponse {
+		int count;
+		List<Transaction> transactions;
 	}
 }

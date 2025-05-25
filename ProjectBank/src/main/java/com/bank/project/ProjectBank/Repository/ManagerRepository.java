@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import com.bank.project.ProjectBank.dto.Manager;
 
 @Component
-public interface ManagerRepository extends JpaRepository<Manager, Integer>{
+public interface ManagerRepository extends JpaRepository<Manager, Integer> {
 
 	@Query("select m from Manager m where m.managerName = ?1")
 	public Manager findByManagerName(String name);

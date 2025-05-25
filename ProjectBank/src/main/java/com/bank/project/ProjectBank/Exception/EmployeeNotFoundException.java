@@ -3,7 +3,7 @@ package com.bank.project.ProjectBank.Exception;
 import lombok.Getter;
 
 @Getter
-public class EmployeeNotFoundException  extends RuntimeException{
+public class EmployeeNotFoundException extends RuntimeException {
 
 	String message;
 
@@ -11,6 +11,5 @@ public class EmployeeNotFoundException  extends RuntimeException{
 		super();
 		this.message = message;
 	}
-	
-	
+
 }

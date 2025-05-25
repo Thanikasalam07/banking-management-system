@@ -31,38 +31,37 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Customer {
-    
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int customerId;
-    @NotNull(message = "customerFirstName not null")
-    @NotEmpty(message = "customerFirstName not empty")
-    private String customerFirstName;
-    @NotNull(message = "customerLastName not null")
-    @NotEmpty(message = "customerLastName not empty")
-    private String customerLastName;
-    @NotNull(message = "Date of birth is required")
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date customerdob;
-    @NotNull(message = "customerEmail not null")
-    @NotEmpty(message = "customerEmail not empty")
-    @Email
-    private String customerEmail;
-    @Min(value = 6000000000l,message = "invalid contact") 
-	@Max(value = 9999999999l,message = "invalid contact")
-    private Long customerContact;
-    @NotNull(message = "customerAddress not null")
-    @NotEmpty(message = "customerAddress not empty")
-    private String customerAddress;
-   
 
-    @OneToMany(cascade = CascadeType.ALL)
-    private List<Account> accounts;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int customerId;
+	@NotNull(message = "customerFirstName not null")
+	@NotEmpty(message = "customerFirstName not empty")
+	private String customerFirstName;
+	@NotNull(message = "customerLastName not null")
+	@NotEmpty(message = "customerLastName not empty")
+	private String customerLastName;
+	@NotNull(message = "Date of birth is required")
+	@JsonFormat(pattern = "yyyy-MM-dd")
+	private Date customerdob;
+	@NotNull(message = "customerEmail not null")
+	@NotEmpty(message = "customerEmail not empty")
+	@Email
+	private String customerEmail;
+	@Min(value = 6000000000l, message = "invalid contact")
+	@Max(value = 9999999999l, message = "invalid contact")
+	private Long customerContact;
+	@NotNull(message = "customerAddress not null")
+	@NotEmpty(message = "customerAddress not empty")
+	private String customerAddress;
 
-    @ManyToOne
-    @JsonIgnoreProperties("branch")
-    private Branch branch;
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<Account> accounts;
 
-    @ManyToOne
-    private Employee createdBy;
+	@ManyToOne
+	@JsonIgnoreProperties("branch")
+	private Branch branch;
+
+	@ManyToOne
+	private Employee createdBy;
 }

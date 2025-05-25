@@ -30,20 +30,19 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-public class Employee 
-{
+public class Employee {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int employeeId;
 	@NotNull(message = "employeeFirstname not null")
-	@NotEmpty(message =  "employeeFirstname not empty")
-	private  String employeeFirstname;
+	@NotEmpty(message = "employeeFirstname not empty")
+	private String employeeFirstname;
 	@NotNull(message = "employeeLastname not null")
-	@NotEmpty(message =  "employeeLastname not empty")
+	@NotEmpty(message = "employeeLastname not empty")
 	private String employeeLastname;
 	@NotNull(message = "employeePosition not null")
-	@NotEmpty(message =  "employeePosition not empty")
+	@NotEmpty(message = "employeePosition not empty")
 	private String employeePosition;
 	@NotNull(message = "Date of emploteeHiredate is required")
 	@JsonFormat(pattern = "yyyy-MM-dd")
@@ -51,21 +50,20 @@ public class Employee
 	@Positive(message = "salary shoud be positive")
 	private double salary;
 	@NotNull(message = "employeeEmail not null")
-	@NotEmpty(message =  "employeeEmail not empty")
+	@NotEmpty(message = "employeeEmail not empty")
 	private String employeeEmail;
-	@Min(value = 6000000000l,message = "invalid contact") 
-    @Max(value = 9999999999l,message = "invalid contact")
+	@Min(value = 6000000000l, message = "invalid contact")
+	@Max(value = 9999999999l, message = "invalid contact")
 	private long employeeContact;
-	
-	    @Enumerated(EnumType.STRING)
-	    private EmployeeType employeetype;
 
-	    @OneToOne(cascade = CascadeType.ALL)
-	    private Address address;
+	@Enumerated(EnumType.STRING)
+	private EmployeeType employeetype;
 
-	    @ManyToOne
-	    @JsonIgnore
-	    private Branch assignedbranch;
-	
-	
+	@OneToOne(cascade = CascadeType.ALL)
+	private Address address;
+
+	@ManyToOne
+	@JsonIgnore
+	private Branch assignedbranch;
+
 }

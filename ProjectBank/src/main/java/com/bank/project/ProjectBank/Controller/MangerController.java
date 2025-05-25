@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.bank.project.ProjectBank.Service.BranchService;
 import com.bank.project.ProjectBank.Service.ManagerService;
 import com.bank.project.ProjectBank.dto.Account;
 import com.bank.project.ProjectBank.dto.Customer;
@@ -25,62 +26,32 @@ public class MangerController {
 
 	@Autowired
 	ManagerService managerservice;
-	
-	@PostMapping
-	public ResponseEntity<Manager> saveManager(@RequestBody Manager manager)
-	{
-		
-		return managerservice.saveManager(manager);
-	}
-	
-	
-	@PutMapping
-	public ResponseEntity<Manager> updateManager(@RequestParam int id , @RequestBody Manager manager)
-	{
-		return managerservice.updateManager(id, manager);
-	}
-	
-	@DeleteMapping
-	public ResponseEntity<Manager> deleteManager(@RequestParam int id)
-	{
-	return	managerservice.deleteManager(id);
-		
-	}
-	
-	@GetMapping
-	public ResponseEntity<Manager> findManager(@RequestParam int id)
-	{
-		return managerservice.findManager(id);
-	}
-	
-	@GetMapping("getAllManagers")
-	public ResponseEntity<List<Manager>> getAllManagers()
-	{
-		return managerservice.getAllManagers();
-	}
-	
-	@GetMapping("findByManagerName")
-	public ResponseEntity<Manager> findByManagerName(@RequestParam String name)
-	{
-		return managerservice.findByManagerName(name);
-	}
-	
-	
+
+	@Autowired
+	BranchService branchService;
+    
+
 	@GetMapping("getAllEmployees")
-	public ResponseEntity<List<Employee>> getAllEmployees()
-	{
+	public ResponseEntity<List<Employee>> getAllEmployees() {
 		return managerservice.getAllEmployees();
 	}
-	
+
 	@GetMapping("getAllCustomers")
-	public ResponseEntity<List<Customer>> getAllCustomers()
-	{
+	public ResponseEntity<List<Customer>> getAllCustomers() {
 		return managerservice.getAllCustomers();
 	}
-	
+
 	@GetMapping("getAllAccounts")
-	public ResponseEntity<List<Account>> getAllAccounts()
-	{
+	public ResponseEntity<List<Account>> getAllAccounts() {
 		return managerservice.getAllaccounts();
 	}
+	
+	@GetMapping("calculateBranchCashFlow")
+	
+	public ResponseEntity<Double> calculateBranchCashFlow(@RequestParam int branchId)
+	{
+	  return	branchService.calculateBranchCashFlow(branchId);
+	}
+
+	
 }
