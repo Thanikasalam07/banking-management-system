@@ -11,5 +11,11 @@ public interface ManagerRepository extends JpaRepository<Manager, Integer> {
 
 	@Query("select m from Manager m where m.managerName = ?1")
 	public Manager findByManagerName(String name);
+	
+	@Query("select m from Manager m where m.location =?1")
+	public Manager searchManagersByLocation(String location);
+	
+	@Query("select m from Manager m where m.managerEmail =?1")
+	public Manager findManagerByEmail(String email);
 
 }

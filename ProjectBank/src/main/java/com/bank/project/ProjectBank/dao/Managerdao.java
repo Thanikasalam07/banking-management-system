@@ -58,6 +58,25 @@ public class Managerdao {
 	}
 
 	public Manager findByManagerName(String name) {
-		return managerrepo.findByManagerName(name);
+		Manager byManagerName = managerrepo.findByManagerName(name);
+		if (byManagerName != null)
+			return byManagerName;
+		else
+			return null;
+	}
+
+	public Manager searchManagersByLocation(String location) {
+		Manager searchManagersByLocation = managerrepo.searchManagersByLocation(location);
+		if (searchManagersByLocation != null)
+			return searchManagersByLocation;
+		else
+			return null;
+	}
+	
+	public Manager findManagerByEmail(String email)
+	{
+		Manager managerByEmail = managerrepo.findManagerByEmail(email);
+		if(managerByEmail!=null) return managerByEmail;
+		else return null;
 	}
 }

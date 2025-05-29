@@ -63,8 +63,28 @@ public class Bankdao {
 	}
 
 	public Bank findByBankName(String bankanme) {
-		return BankRepo.findByBankName(bankanme);
+		Bank byBankName = BankRepo.findByBankName(bankanme);
+		if (byBankName != null)
+			return byBankName;
+		else
+			return null;
 	}
-	
-	
+
+	public Bank findBankByStateAndCity(String city, String state) {
+
+		Bank byStateAndCity = BankRepo.findByStateAndCity(city, state);
+		if (byStateAndCity != null)
+			return byStateAndCity;
+		else
+			return null;
+	}
+
+	public Bank findBranchByIFSCCode(String ifsccode) {
+		Bank branchByIFSCCode = BankRepo.findBranchByIFSCCode(ifsccode);
+		if (branchByIFSCCode != null)
+			return branchByIFSCCode;
+		else
+			return null;
+	}
+
 }

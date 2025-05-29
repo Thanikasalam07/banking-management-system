@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.bank.project.ProjectBank.Repository.EmployeeRepository;
 import com.bank.project.ProjectBank.dto.Employee;
+import com.bank.project.ProjectBank.dto.EmployeeType;
 
 @Repository
 public class EmployeeDao {
@@ -53,5 +54,12 @@ public class EmployeeDao {
 			return data;
 		else
 			return null;
+	}
+	
+	public Employee findEmployeesByRole(EmployeeType employeeType) {
+		
+		Employee employeesByRole = employeerepo.findEmployeesByRole(employeeType);
+		if(employeesByRole!=null) return employeesByRole;
+		else return null;
 	}
 }

@@ -28,7 +28,7 @@ public class Bank {
 	private int bankId;
 	@NotNull(message = "bankcode should not null")
 	@NotEmpty(message = "bankcode not empty")
-	private String bankcode;
+	private String bankifsccode;
 	@NotNull(message = "name should not null")
 	@NotEmpty(message = "name not empty")
 	private String bankName;
@@ -38,6 +38,12 @@ public class Bank {
 	@Min(value = 6000000000l, message = "invalid contact")
 	@Max(value = 9999999999l, message = "invalid contact")
 	private long bankContactNumber;
+	@NotNull(message = "bankstate should not null")
+	@NotEmpty(message = "bankstate not empty")
+	private String bankstate;
+	@NotNull(message = "bankcity should not null")
+	@NotEmpty(message = "bankcity not empty")
+	private String bankcity;
 
 	@OneToMany(mappedBy = "bank", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<Branch> branch;

@@ -47,15 +47,20 @@ public class BankService {
 
 	@Autowired
 	Managerdao managerdao;
-	
+
 	@Autowired
 	Accountdao accountdao;
 
 	public ResponseEntity<Bank> saveBank(Bank bank) {
-		Bank data = bankdao.saveBank(bank);
-		if (data != null)
-			return new ResponseEntity<Bank>(data, HttpStatus.CREATED);
-		else
+
+		if (bank != null) {
+			List<Branch> branch = bank.getBranch();
+			for (Branch b : branch) {
+				b.setBank(bank);
+			}
+			Bank saveBank = bankdao.saveBank(bank);
+			return new ResponseEntity<Bank>(saveBank, HttpStatus.CREATED);
+		} else
 			throw new BankNotFoundException("bank object has not been created");
 	}
 
@@ -226,17 +231,17 @@ public class BankService {
 					if (a.getAccountype() == AccountType.Saving) {
 						List<Transaction> transaction = a.getTransaction();
 						for (Transaction t : transaction) {
-							if (t.getType() == TransactionType.deposit)
+							if (t.getType() == TransactionType.credit)
 								totalamount += t.getTransactionAmount();
-							else if (t.getType() == TransactionType.withdrawel)
+							else if (t.getType() == TransactionType.debit)
 								totalamount -= t.getTransactionAmount();
 						}
 					} else if (a.getAccountype() == AccountType.Current) {
 						List<Transaction> transaction = a.getTransaction();
 						for (Transaction t : transaction) {
-							if (t.getType() == TransactionType.deposit)
+							if (t.getType() == TransactionType.credit)
 								totalamount += t.getTransactionAmount();
-							else if (t.getType() == TransactionType.withdrawel)
+							else if (t.getType() == TransactionType.debit)
 								totalamount -= t.getTransactionAmount();
 						}
 					}
@@ -289,7 +294,7 @@ public class BankService {
 				for (Account a : accounts) {
 					List<Transaction> transaction = a.getTransaction();
 					for (Transaction t : transaction) {
-						if (t.getType() == TransactionType.deposit)
+						if (t.getType() == TransactionType.credit)
 							totaldepositamount += t.getTransactionAmount();
 					}
 				}
@@ -310,7 +315,7 @@ public class BankService {
 				for (Account a : accounts) {
 					List<Transaction> transaction = a.getTransaction();
 					for (Transaction t : transaction) {
-						if (t.getType() == TransactionType.withdrawel)
+						if (t.getType() == TransactionType.debit)
 							totalwithdrawamount += t.getTransactionAmount();
 					}
 				}
@@ -359,7 +364,7 @@ public class BankService {
 				for (Account a : accounts) {
 					List<Transaction> transaction = a.getTransaction();
 					for (Transaction t : transaction) {
-						if (t.getType() == TransactionType.deposit && !t.getTimestamp().isBefore(startdate)
+						if (t.getType() == TransactionType.credit && !t.getTimestamp().isBefore(startdate)
 								&& !t.getTimestamp().isAfter(enddate)) {
 							transactioncount++;
 							deposittransactions.add(t);
@@ -368,7 +373,7 @@ public class BankService {
 				}
 			}
 
-		    transactionresponse data = new transactionresponse();
+			transactionresponse data = new transactionresponse();
 			data.setCount(transactioncount);
 			data.setTransactions(deposittransactions);
 
@@ -377,45 +382,64 @@ public class BankService {
 			throw new BranchNotFoundException("branch object not found");
 	}
 
-	
-	public ResponseEntity accountsOpenedInSingleDay(int branchId ,Date date)
-	{
+	public ResponseEntity accountsOpenedInSingleDay(int branchId, Date date) {
 		Branch branch = branchdao.findBranch(branchId);
 		List<Account> newdata = new ArrayList<Account>();
-		int accountcount =0;
-		if(branch!=null) 
-		{
+		int accountcount = 0;
+		if (branch != null) {
 			List<Customer> customer = branch.getCustomer();
-			for(Customer c:customer)
-			{
+			for (Customer c : customer) {
 				List<Account> accounts = c.getAccounts();
-				for(Account a:accounts)
-				{    
-				    
-					
-					if(a.getCreatedAt().equals(date))
-					{
+				for (Account a : accounts) {
+
+					if (a.getCreatedAt().equals(date)) {
 						newdata.add(a);
 						accountcount++;
 					}
 				}
 			}
-			
+
 			accountResponse a = new accountResponse();
 			a.setAccountsdata(newdata);
 			a.setCount(accountcount);
-			
-			return new ResponseEntity(a,HttpStatus.OK);
-		}
-		else throw new BranchNotFoundException("branch object not found(check the branch id)");
+
+			return new ResponseEntity(a, HttpStatus.OK);
+		} else
+			throw new BranchNotFoundException("branch object not found(check the branch id)");
+	}
+
+	public ResponseEntity<Bank> findBankByCityAndState(String city, String state) {
+		Bank bankByStateAndCity = bankdao.findBankByStateAndCity(city, state);
+		if (bankByStateAndCity != null)
+			return new ResponseEntity<Bank>(bankByStateAndCity, HttpStatus.FOUND);
+		else
+			throw new BankNotFoundException("bank object not found");
+	}
+
+	public ResponseEntity<Bank> findBranchByIFSCCode(String ifsccode) {
+		Bank branchByIFSCCode = bankdao.findBranchByIFSCCode(ifsccode);
+		if (branchByIFSCCode != null)
+			return new ResponseEntity<Bank>(branchByIFSCCode, HttpStatus.FOUND);
+		else
+			throw new BankNotFoundException("bank object not found");
+	}
+
+	public ResponseEntity<Manager> searchManagersByLocation(String location) {
+		Manager data = managerdao.searchManagersByLocation(location);
+		if (data != null)
+			return new ResponseEntity<Manager>(data, HttpStatus.FOUND);
+		else
+			return null;
+
 	}
 	
-	
-	
-	
-	
-	
-	
+	public ResponseEntity<Manager> findManagerByEmail(String email)
+	{
+		Manager managerByEmail = managerdao.findManagerByEmail(email);
+		if(managerByEmail!=null) return new ResponseEntity<Manager>(managerByEmail,HttpStatus.FOUND);
+		else throw new ManagerNotFoundException("manager object not found");
+	}
+
 	@Getter
 	@Setter
 	public class accountResponse {
@@ -426,7 +450,7 @@ public class BankService {
 
 	@Getter
 	@Setter
-	public class  transactionresponse {
+	public class transactionresponse {
 		int count;
 		List<Transaction> transactions;
 	}

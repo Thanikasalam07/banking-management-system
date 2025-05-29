@@ -48,8 +48,7 @@ public class Transaction {
 	    private double transactionAmount;
 
 	    @NotNull
-	    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-	    private LocalDateTime timestamp = LocalDateTime.now(); 
+	    private LocalDateTime timestamp;; 
 
 	    private String status;
 	

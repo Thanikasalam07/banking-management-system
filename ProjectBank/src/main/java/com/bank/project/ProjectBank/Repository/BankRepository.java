@@ -11,4 +11,11 @@ public interface BankRepository extends JpaRepository<Bank, Integer> {
 
 	@Query("SELECT b FROM Bank b WHERE b.bankName = ?1")
 	public Bank findByBankName(String bankname);
+	
+	@Query("select b from Bank b where b.bankstate = ?1 and b.bankcity =?2")
+	public Bank findByStateAndCity(String bankcity , String bankstate);
+	
+	@Query("select b from Bank b where b.bankifsccode =?1")
+	public Bank findBranchByIFSCCode(String code);
+
 }

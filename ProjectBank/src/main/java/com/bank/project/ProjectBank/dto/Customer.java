@@ -50,7 +50,7 @@ public class Customer {
 	private String customerEmail;
 	@Min(value = 6000000000l, message = "invalid contact")
 	@Max(value = 9999999999l, message = "invalid contact")
-	private Long customerContact;
+	private long customerContact;
 	@NotNull(message = "customerAddress not null")
 	@NotEmpty(message = "customerAddress not empty")
 	private String customerAddress;

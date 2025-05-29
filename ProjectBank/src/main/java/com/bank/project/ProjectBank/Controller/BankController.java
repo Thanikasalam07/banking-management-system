@@ -140,4 +140,30 @@ public class BankController {
 		return bankservice.accountsOpenedInSingleDay(branchId, date);
 	}
 	
+	
+	@GetMapping("findBankByCityAndState")
+	public ResponseEntity<Bank> findBankByCityAndState(@RequestParam String city , @RequestParam String state )
+	{
+		return bankservice.findBankByCityAndState(city, city);
+	}
+
+	@GetMapping("findBranchByIFSCCode")
+	public ResponseEntity<Bank> findBranchByIFSCCode(@RequestParam String ifsccode)
+	{
+		return bankservice.findBranchByIFSCCode(ifsccode);
+	}
+
+	@GetMapping("searchManagersByLocation")
+	public ResponseEntity<Manager> searchManagersByLocation(@RequestParam String location)
+	{
+		return bankservice.searchManagersByLocation(location);
+	}
+	
+	
+	@GetMapping("findManagerByEmail")
+	public ResponseEntity<Manager> findManagerByEmail(@RequestParam String email)
+	{
+		return bankservice.findManagerByEmail(email);
+	}
+	
 }

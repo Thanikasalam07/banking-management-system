@@ -39,6 +39,9 @@ public class Manager {
 	@Min(value = 6000000000l, message = "invalid contact")
 	@Max(value = 9999999999l, message = "invalid contact")
 	private Long managerContact;
+	@NotNull(message = "location not null")
+	@NotEmpty(message = "location not empty")
+	private String location;
 
 	@OneToOne
 	@JsonIgnore

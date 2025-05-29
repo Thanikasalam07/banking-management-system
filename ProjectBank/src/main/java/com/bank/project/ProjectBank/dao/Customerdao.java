@@ -64,4 +64,19 @@ public class Customerdao {
 		else
 			return null;
 	}
+	
+	public Customer findCustomerByMobileNumber(Long mobileNumber)
+	{
+		Customer customerByMobileNumber = customerrepo.findCustomerByMobileNumber(mobileNumber);
+		if(customerByMobileNumber!=null) return customerByMobileNumber;
+		else return null;
+	}
+	
+	
+	public Customer findCustomerByEmail(String email)
+	{
+		Customer customerByEmail = customerrepo.findCustomerByEmail(email);
+		if(customerByEmail!=null) return customerByEmail;
+		else return null;
+	}
 }

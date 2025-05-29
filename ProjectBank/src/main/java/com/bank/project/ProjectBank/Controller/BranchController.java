@@ -20,6 +20,7 @@ import com.bank.project.ProjectBank.dto.AccountType;
 import com.bank.project.ProjectBank.dto.Branch;
 import com.bank.project.ProjectBank.dto.Customer;
 import com.bank.project.ProjectBank.dto.Employee;
+import com.bank.project.ProjectBank.dto.EmployeeType;
 import com.bank.project.ProjectBank.dto.Manager;
 
 @RestController
@@ -31,7 +32,7 @@ public class BranchController {
 
 
 	@PutMapping("addNewEmployeeToBranch")
-	public ResponseEntity<Branch> addNewEmployeeToBranch(@RequestParam int branchId, @RequestBody Employee employee) {
+	public ResponseEntity<Employee> addNewEmployeeToBranch(@RequestParam int branchId, @RequestBody Employee employee) {
 		return branchservice.addNewEmployeeToBranch(branchId, employee);
 	}
 
@@ -95,5 +96,47 @@ public class BranchController {
 	@GetMapping("getNumberOfTransactions")
 	public ResponseEntity getNumberOfTransactionsByBranch(@RequestParam int branchId) {
 		return branchservice.getNumberOfTransactions(branchId);
+	}
+	
+	@GetMapping("findCustomerByMobileNumber")
+	public ResponseEntity<Customer> findCustomerByMobileNumber(@RequestParam long mobilenum)
+	{
+		return branchservice.findCustomerByMobileNumber(mobilenum);
+	}
+	
+	@GetMapping("findCustomerByEmail")
+	public ResponseEntity<Customer> findCustomerByEmail(@RequestParam String email)
+	{
+		return branchservice.findCustomerByEmail(email);
+	}
+	
+	@GetMapping("findEmployeesByRole")
+	public ResponseEntity<Employee> findEmployeesByRole(@RequestParam EmployeeType findEmployeesByRole)
+	{
+		return branchservice.findEmployeesByRole(findEmployeesByRole);
+	}
+	
+	@GetMapping("findAccountsByCustomerName")
+	public ResponseEntity<List<Account>> findAccountsByCustomerName(@RequestParam String fname ,@RequestParam String lname)
+	{
+		return branchservice.findAccountsByCustomerName(fname, lname);
+	}
+	
+	@GetMapping("findAccountByAccountNumber")
+	public ResponseEntity<Account> findAccountByAccountNumber(@RequestParam int accountnum)
+	{
+		return branchservice.findAccountByAccountNumber(accountnum);
+	}
+	
+	@GetMapping("filterAccountsByBalanceRange")
+	public ResponseEntity<List<Account>> filterAccountsByBalanceRange(@RequestParam int branchid ,@RequestParam double minrange ,@RequestParam double maxrange)
+	{
+		return branchservice.filterAccountsByBalanceRange(branchid, minrange, maxrange);
+	}
+	
+	@GetMapping("filterAccountsByAccountType")
+	public ResponseEntity<List<Account>> filterAccountsByAccountType(@RequestParam int branchid ,@RequestParam AccountType accountType)
+	{
+		return branchservice.filterAccountsByAccountType(branchid, accountType);
 	}
 }

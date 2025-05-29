@@ -28,6 +28,7 @@ import com.bank.project.ProjectBank.dto.AccountType;
 import com.bank.project.ProjectBank.dto.Branch;
 import com.bank.project.ProjectBank.dto.Customer;
 import com.bank.project.ProjectBank.dto.Employee;
+import com.bank.project.ProjectBank.dto.EmployeeType;
 import com.bank.project.ProjectBank.dto.Manager;
 import com.bank.project.ProjectBank.dto.Transaction;
 import com.bank.project.ProjectBank.dto.TransactionType;
@@ -52,7 +53,6 @@ public class BranchService {
 
 	@Autowired
 	Accountdao accountdao;
-
 
 	public ResponseEntity<List<Employee>> getAllEmployees() {
 		List<Employee> data = employeedao.getAllEmployee();
@@ -102,15 +102,11 @@ public class BranchService {
 			throw new AccounNotFoundException("account details not found");
 	}
 
-
-
-
-
 	/////////////////////////////////////////////////////////////////////////////////////////
 
 	//////////////////////////////////////////////////////////////////////////////////////////
 
-	public ResponseEntity<Branch> addNewEmployeeToBranch(int branchId, Employee employee) {
+	public ResponseEntity<Employee> addNewEmployeeToBranch(int branchId, Employee employee) {
 		Branch branch = branchdao.findBranch(branchId);
 		Employee saveEmployee = employeedao.saveEmployee(employee);
 		saveEmployee.setAssignedbranch(branch);
@@ -118,7 +114,7 @@ public class BranchService {
 			if (saveEmployee != null) {
 				branch.getEmployee().add(saveEmployee);
 				Branch updateBranch = branchdao.updateBranch(branchId, branch);
-				return new ResponseEntity<Branch>(branch, HttpStatus.OK);
+				return new ResponseEntity<Employee>(saveEmployee, HttpStatus.OK);
 			} else
 				throw new EmployeeNotFoundException("employee object not found ");
 
@@ -155,17 +151,17 @@ public class BranchService {
 					if (a.getAccountype() == AccountType.Saving) {
 						List<Transaction> transaction = a.getTransaction();
 						for (Transaction t : transaction) {
-							if (t.getType() == TransactionType.deposit)
+							if (t.getType() == TransactionType.credit)
 								totalamount += t.getTransactionAmount();
-							else if (t.getType() == TransactionType.withdrawel)
+							else if (t.getType() == TransactionType.debit)
 								totalamount -= t.getTransactionAmount();
 						}
 					} else if (a.getAccountype() == AccountType.Current) {
 						List<Transaction> transaction = a.getTransaction();
 						for (Transaction t : transaction) {
-							if (t.getType() == TransactionType.deposit)
+							if (t.getType() == TransactionType.credit)
 								totalamount += t.getTransactionAmount();
-							else if (t.getType() == TransactionType.withdrawel)
+							else if (t.getType() == TransactionType.debit)
 								totalamount -= t.getTransactionAmount();
 						}
 					}
@@ -218,7 +214,7 @@ public class BranchService {
 				for (Account a : accounts) {
 					List<Transaction> transaction = a.getTransaction();
 					for (Transaction t : transaction) {
-						if (t.getType() == TransactionType.deposit)
+						if (t.getType() == TransactionType.credit)
 							totaldepositamount += t.getTransactionAmount();
 					}
 				}
@@ -239,7 +235,7 @@ public class BranchService {
 				for (Account a : accounts) {
 					List<Transaction> transaction = a.getTransaction();
 					for (Transaction t : transaction) {
-						if (t.getType() == TransactionType.withdrawel)
+						if (t.getType() == TransactionType.debit)
 							totalwithdrawamount += t.getTransactionAmount();
 					}
 				}
@@ -272,6 +268,88 @@ public class BranchService {
 			f.setTransactions(newdatatransaction);
 
 			return new ResponseEntity(f, HttpStatus.OK);
+		} else
+			throw new BranchNotFoundException("branch object not found");
+	}
+
+	public ResponseEntity<Customer> findCustomerByMobileNumber(long mobilenum) {
+		Customer customerByMobileNumber = customerdao.findCustomerByMobileNumber(mobilenum);
+		if (customerByMobileNumber != null)
+			return new ResponseEntity<Customer>(customerByMobileNumber, HttpStatus.FOUND);
+		else
+			throw new CustomerNotFoundException("customer object not found");
+	}
+
+	public ResponseEntity<Customer> findCustomerByEmail(String email) {
+		Customer customerByEmail = customerdao.findCustomerByEmail(email);
+		if (customerByEmail != null)
+			return new ResponseEntity<Customer>(customerByEmail, HttpStatus.FOUND);
+		else
+			throw new CustomerNotFoundException("customer object not found");
+	}
+
+	public ResponseEntity<Employee> findEmployeesByRole(EmployeeType employeeType) {
+		Employee employeesByRole = employeedao.findEmployeesByRole(employeeType);
+		if (employeesByRole != null)
+			return new ResponseEntity<Employee>(employeesByRole, HttpStatus.FOUND);
+		else
+			throw new EmployeeNotFoundException("employee object not found");
+	}
+
+	public ResponseEntity<List<Account>> findAccountsByCustomerName(String fname, String lname) {
+		Customer byCustomerName = customerdao.findByCustomerName(fname, lname);
+		List<Account> accounts = byCustomerName.getAccounts();
+		if (!accounts.isEmpty())
+			return new ResponseEntity<List<Account>>(accounts, HttpStatus.FOUND);
+		else
+			throw new AccounNotFoundException("customer doesn't having any account ");
+	}
+
+	public ResponseEntity<Account> findAccountByAccountNumber(int accountnum) {
+		Account account = accountdao.findAccount(accountnum);
+		if (account != null)
+			return new ResponseEntity<Account>(account, HttpStatus.FOUND);
+		else
+			throw new AccounNotFoundException("account object not found");
+	}
+
+	public ResponseEntity<List<Account>> filterAccountsByBalanceRange(int branchId, double minrange, double maxrange) {
+		Branch branch = branchdao.findBranch(branchId);
+		List<Account> newdata = new ArrayList<Account>();
+		if (branch != null) {
+			List<Customer> customer = branch.getCustomer();
+			if (!customer.isEmpty()) {
+				for (Customer c : customer) {
+					List<Account> accounts = c.getAccounts();
+					for (Account a : accounts) {
+						if (a.getAccountBalance() >= minrange && a.getAccountBalance() <= maxrange)
+							newdata.add(a);
+					}
+				}
+			} else
+				throw new AccounNotFoundException("customer details not found");
+			return new ResponseEntity<List<Account>>(newdata, HttpStatus.FOUND);
+		} else
+			throw new BranchNotFoundException("branch object not found");
+	}
+
+	public ResponseEntity<List<Account>> filterAccountsByAccountType(int branchid, AccountType accountType) {
+		Branch branch = branchdao.findBranch(branchid);
+		List<Account> newdata = new ArrayList<Account>();
+		if (branch != null) {
+			List<Customer> customer = branch.getCustomer();
+			if (!customer.isEmpty()) {
+				for (Customer c : customer) {
+					List<Account> accounts = c.getAccounts();
+					for (Account a : accounts) {
+						if (a.getAccountype() == accountType)
+							newdata.add(a);
+
+					}
+				}
+			} else
+				throw new CustomerNotFoundException("customer details not found");
+			return new ResponseEntity<List<Account>>(newdata, HttpStatus.FOUND);
 		} else
 			throw new BranchNotFoundException("branch object not found");
 	}

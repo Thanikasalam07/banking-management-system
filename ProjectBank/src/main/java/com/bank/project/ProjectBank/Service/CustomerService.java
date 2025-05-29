@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.bank.project.ProjectBank.Exception.AccounNotFoundException;
 import com.bank.project.ProjectBank.Exception.CustomerNotFoundException;
@@ -78,6 +79,7 @@ public class CustomerService {
 	}
 	
 	
+	@Transactional
 	public ResponseEntity<Transaction> transferBetweenAccounts(int senderaccount, int receiveraccount, Transaction transaction)
 	{
 		
