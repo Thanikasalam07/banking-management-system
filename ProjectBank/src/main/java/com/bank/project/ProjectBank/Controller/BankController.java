@@ -72,7 +72,7 @@ public class BankController {
 	}
 
 	@PutMapping("addNewManagerToBranch")
-	public ResponseEntity<Branch> addNewManagerToBranch(@RequestParam int branchId, @RequestBody Manager manager) {
+	public ResponseEntity<Manager> addNewManagerToBranch(@RequestParam int branchId, @RequestBody Manager manager) {
 		return bankservice.addNewManagerToBranch(branchId, manager);
 	}
 

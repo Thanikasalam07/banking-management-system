@@ -43,7 +43,7 @@ public class Customer {
 	private String customerLastName;
 	@NotNull(message = "Date of birth is required")
 	@JsonFormat(pattern = "yyyy-MM-dd")
-	private Date customerdob;
+	private String customerdob;
 	@NotNull(message = "customerEmail not null")
 	@NotEmpty(message = "customerEmail not empty")
 	@Email
@@ -54,7 +54,14 @@ public class Customer {
 	@NotNull(message = "customerAddress not null")
 	@NotEmpty(message = "customerAddress not empty")
 	private String customerAddress;
-
+    
+	@NotNull(message = "customerage not null")
+	@NotEmpty(message = "customerage not empty")
+	private String customerage;
+	
+	@NotNull(message = "customergender not null")
+	@NotEmpty(message = "customergender not empty")
+	private String customergender;
 	@OneToMany(cascade = CascadeType.ALL)
 	private List<Account> accounts;
 

@@ -1,6 +1,7 @@
 package com.bank.project.ProjectBank.Controller;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import com.bank.project.ProjectBank.dto.Customer;
 import com.bank.project.ProjectBank.dto.Employee;
 import com.bank.project.ProjectBank.dto.EmployeeType;
 import com.bank.project.ProjectBank.dto.Manager;
+import com.bank.project.ProjectBank.dto.Transaction;
 
 @RestController
 @RequestMapping("branch")
@@ -29,7 +31,6 @@ public class BranchController {
 
 	@Autowired
 	BranchService branchservice;
-
 
 	@PutMapping("addNewEmployeeToBranch")
 	public ResponseEntity<Employee> addNewEmployeeToBranch(@RequestParam int branchId, @RequestBody Employee employee) {
@@ -97,46 +98,78 @@ public class BranchController {
 	public ResponseEntity getNumberOfTransactionsByBranch(@RequestParam int branchId) {
 		return branchservice.getNumberOfTransactions(branchId);
 	}
-	
+
 	@GetMapping("findCustomerByMobileNumber")
-	public ResponseEntity<Customer> findCustomerByMobileNumber(@RequestParam long mobilenum)
-	{
+	public ResponseEntity<Customer> findCustomerByMobileNumber(@RequestParam long mobilenum) {
 		return branchservice.findCustomerByMobileNumber(mobilenum);
 	}
-	
+
 	@GetMapping("findCustomerByEmail")
-	public ResponseEntity<Customer> findCustomerByEmail(@RequestParam String email)
-	{
+	public ResponseEntity<Customer> findCustomerByEmail(@RequestParam String email) {
 		return branchservice.findCustomerByEmail(email);
 	}
-	
+
 	@GetMapping("findEmployeesByRole")
-	public ResponseEntity<Employee> findEmployeesByRole(@RequestParam EmployeeType findEmployeesByRole)
-	{
+	public ResponseEntity<Employee> findEmployeesByRole(@RequestParam EmployeeType findEmployeesByRole) {
 		return branchservice.findEmployeesByRole(findEmployeesByRole);
 	}
-	
+
 	@GetMapping("findAccountsByCustomerName")
-	public ResponseEntity<List<Account>> findAccountsByCustomerName(@RequestParam String fname ,@RequestParam String lname)
-	{
+	public ResponseEntity<List<Account>> findAccountsByCustomerName(@RequestParam String fname,
+			@RequestParam String lname) {
 		return branchservice.findAccountsByCustomerName(fname, lname);
 	}
-	
+
 	@GetMapping("findAccountByAccountNumber")
-	public ResponseEntity<Account> findAccountByAccountNumber(@RequestParam int accountnum)
-	{
+	public ResponseEntity<Account> findAccountByAccountNumber(@RequestParam int accountnum) {
 		return branchservice.findAccountByAccountNumber(accountnum);
 	}
-	
+
 	@GetMapping("filterAccountsByBalanceRange")
-	public ResponseEntity<List<Account>> filterAccountsByBalanceRange(@RequestParam int branchid ,@RequestParam double minrange ,@RequestParam double maxrange)
-	{
+	public ResponseEntity<List<Account>> filterAccountsByBalanceRange(@RequestParam int branchid,
+			@RequestParam double minrange, @RequestParam double maxrange) {
 		return branchservice.filterAccountsByBalanceRange(branchid, minrange, maxrange);
 	}
-	
+
 	@GetMapping("filterAccountsByAccountType")
-	public ResponseEntity<List<Account>> filterAccountsByAccountType(@RequestParam int branchid ,@RequestParam AccountType accountType)
-	{
+	public ResponseEntity<List<Account>> filterAccountsByAccountType(@RequestParam int branchid,
+			@RequestParam AccountType accountType) {
 		return branchservice.filterAccountsByAccountType(branchid, accountType);
 	}
+
+	@GetMapping("filterTransactionsByDateRange")
+	public ResponseEntity<List<Transaction>> filterTransactionsByDateRange(@RequestParam LocalDateTime startdate,
+		 @RequestParam 	LocalDateTime enddate, @RequestParam int branchid) {
+		
+		return branchservice.filterTransactionsByDateRange(startdate, enddate, branchid);
+
+	}
+	
+	@GetMapping("filterTransactionsByAmountRange")
+	public ResponseEntity<List<Transaction>> filterTransactionsByAmountRange(@RequestParam double startamount, @RequestParam double endamount,
+		@RequestParam	int branchid) {
+		
+		return branchservice.filterTransactionsByAmountRange(startamount, endamount, branchid);
+				 
+	}
+	
+	@GetMapping("filterCustomersByAgeRange")
+	public ResponseEntity<List<Customer>> filterCustomersByAgeRange(int branchid, String customerage) {
+		
+		return branchservice.filterCustomersByAgeRange(branchid, customerage);
+	}
+	
+	
+	@GetMapping("filterEmployeesByJoiningDate")
+	public ResponseEntity<List<Employee>> filterEmployeesByJoiningDate(int branchid, Date joiningdate) {
+		return branchservice.filterEmployeesByJoiningDate(branchid, joiningdate);
+	}
+	
+	@GetMapping("filterCustomersByGender")
+	public ResponseEntity<List<Customer>> filterCustomersByGender(int branchId , String gender)
+	{
+		return branchservice.filterCustomersByGender(branchId, gender);
+	}
+	
+
 }

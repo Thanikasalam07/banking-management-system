@@ -187,7 +187,7 @@ public class BankService {
 
 	}
 
-	public ResponseEntity<Branch> addNewManagerToBranch(int branchId, Manager manager) {
+	public ResponseEntity<Manager> addNewManagerToBranch(int branchId, Manager manager) {
 		Branch branch = branchdao.findBranch(branchId);
 		Manager data = branch.getManager();
 		branch.setManager(manager);
@@ -196,7 +196,7 @@ public class BankService {
 			if (data == null) {
 				branch.setManager(manager);
 				Branch updateBranch = branchdao.updateBranch(branchId, branch);
-				return new ResponseEntity<Branch>(branch, HttpStatus.OK);
+				return new ResponseEntity<Manager>(manager, HttpStatus.OK);
 			} else
 				throw new ManagerNotFoundException("manager object already present");
 		} else

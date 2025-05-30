@@ -1,6 +1,7 @@
 package com.bank.project.ProjectBank.Service;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -352,6 +353,103 @@ public class BranchService {
 			return new ResponseEntity<List<Account>>(newdata, HttpStatus.FOUND);
 		} else
 			throw new BranchNotFoundException("branch object not found");
+	}
+
+	public ResponseEntity<List<Transaction>> filterTransactionsByDateRange(LocalDateTime startdate,
+			LocalDateTime enddate, int branchid) {
+		Branch branch = branchdao.findBranch(branchid);
+		List<Transaction> newdata = new ArrayList<Transaction>();
+		if (branch != null) {
+			List<Customer> customer = branch.getCustomer();
+			for (Customer c : customer) {
+				List<Account> accounts = c.getAccounts();
+				for (Account a : accounts) {
+					List<Transaction> transaction = a.getTransaction();
+					for (Transaction t : transaction) {
+						if (!t.getTimestamp().isBefore(startdate) && !t.getTimestamp().isAfter(enddate)) {
+							newdata.add(t);
+						}
+					}
+				}
+			}
+
+			return new ResponseEntity<List<Transaction>>(newdata, HttpStatus.FOUND);
+
+		} else
+			throw new BranchNotFoundException("branch object not found");
+	}
+
+	public ResponseEntity<List<Transaction>> filterTransactionsByAmountRange(double startamount, double endamount,
+			int branchid) {
+		Branch branch = branchdao.findBranch(branchid);
+		List<Transaction> newdata = new ArrayList<Transaction>();
+		if (branch != null) {
+			List<Customer> customer = branch.getCustomer();
+			for (Customer c : customer) {
+				List<Account> accounts = c.getAccounts();
+				for (Account a : accounts) {
+					List<Transaction> transaction = a.getTransaction();
+					for (Transaction t : transaction) {
+						if (t.getTransactionAmount() >= startamount && t.getTransactionAmount() <= endamount) {
+							newdata.add(t);
+						}
+					}
+
+				}
+			}
+
+			return new ResponseEntity<List<Transaction>>(newdata, HttpStatus.FOUND);
+
+		} else
+			throw new BranchNotFoundException("branch object not found");
+	}
+
+	public ResponseEntity<List<Customer>> filterCustomersByAgeRange(int branchid, String customerage) {
+		Branch branch = branchdao.findBranch(branchid);
+		List<Customer> newdata = new ArrayList<Customer>();
+		if (branch != null) {
+			List<Customer> customer = branch.getCustomer();
+			for (Customer c : customer) {
+				if (c.getCustomerage().equalsIgnoreCase(customerage))
+					newdata.add(c);
+			}
+
+			return new ResponseEntity<List<Customer>>(newdata, HttpStatus.FOUND);
+		} else
+			throw new BranchNotFoundException("branch object not found");
+	}
+
+	public ResponseEntity<List<Employee>> filterEmployeesByJoiningDate(int branchid, Date joiningdate) {
+		Branch branch = branchdao.findBranch(branchid);
+		List<Employee> newdata = new ArrayList<>();
+		if (branch != null) {
+			List<Employee> employee = branch.getEmployee();
+			for (Employee e : employee) {
+				if (e.getEmploteeHiredate().equals(joiningdate))
+					newdata.add(e);
+			}
+			return new ResponseEntity<List<Employee>>(newdata, HttpStatus.FOUND);
+		} else
+			throw new BranchNotFoundException("branch object not found");
+	}
+	
+	
+	public ResponseEntity<List<Customer>> filterCustomersByGender(int branchId , String gender)
+	{
+		Branch branch = branchdao.findBranch(branchId);
+		List<Customer> newdata = new ArrayList<Customer>();
+		if(branch!=null)
+		{
+			List<Customer> customer = branch.getCustomer();
+			for(Customer c:customer) 
+			{
+				if(c.getCustomergender().equalsIgnoreCase(gender))
+					newdata.add(c);
+					
+			}
+			return new ResponseEntity<List<Customer>>(newdata,HttpStatus.FOUND);
+		}
+		else throw new BranchNotFoundException("branch object not found");
 	}
 
 	@Getter

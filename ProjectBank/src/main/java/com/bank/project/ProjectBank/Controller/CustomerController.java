@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bank.project.ProjectBank.Service.AccountService;
 import com.bank.project.ProjectBank.Service.CustomerService;
 import com.bank.project.ProjectBank.dto.Account;
+import com.bank.project.ProjectBank.dto.AccountType;
 import com.bank.project.ProjectBank.dto.Customer;
 import com.bank.project.ProjectBank.dto.Transaction;
 import com.bank.project.ProjectBank.dto.TransactionType;
@@ -54,13 +55,23 @@ public class CustomerController {
 
 	@GetMapping("DebitTransactions")
 	public ResponseEntity<List<Transaction>> getDebitTransactions(@RequestParam int accountId) {
-     
+
 		return customerservice.getDebitTransactions(accountId);
 	}
-	
+	@GetMapping("getCreditTransactions")
+	public ResponseEntity<List<Transaction>> getCreditTransactions(@RequestParam int accountid)
+	{
+		return customerservice.getCreditTransactions(accountid);
+	}
+
 	@GetMapping("TransactionsByDateRange")
-	 public ResponseEntity<List<Transaction>> getTransactionsByDateRange(@RequestParam int accountId, @RequestParam LocalDateTime from, @RequestParam LocalDateTime to)
-	    {
-		  return customerservice.getTransactionsByDateRange(accountId, from, to);
-	    }
+	public ResponseEntity<List<Transaction>> getTransactionsByDateRange(@RequestParam int accountId,
+			@RequestParam LocalDateTime from, @RequestParam LocalDateTime to) {
+		return customerservice.getTransactionsByDateRange(accountId, from, to);
+	}
+	@GetMapping("filterTransactionsByAmountRange")
+	public ResponseEntity<List<Transaction>> filterTransactionsByAmountRange(@RequestParam double startamount , @RequestParam double endamount , @RequestParam int customerid ,@RequestParam AccountType accountType)
+	{
+		return customerservice.filterTransactionsByAmountRange(startamount, endamount, customerid, accountType);
+	}
 }

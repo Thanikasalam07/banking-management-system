@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.bank.project.ProjectBank.Exception.AccounNotFoundException;
+import com.bank.project.ProjectBank.Exception.BranchNotFoundException;
 import com.bank.project.ProjectBank.Exception.CustomerNotFoundException;
 import com.bank.project.ProjectBank.Exception.TransactionNotFoundException;
 import com.bank.project.ProjectBank.Repository.AccountRepository;
@@ -22,6 +23,8 @@ import com.bank.project.ProjectBank.dao.Accountdao;
 import com.bank.project.ProjectBank.dao.Customerdao;
 import com.bank.project.ProjectBank.dao.Transactiondao;
 import com.bank.project.ProjectBank.dto.Account;
+import com.bank.project.ProjectBank.dto.AccountType;
+import com.bank.project.ProjectBank.dto.Branch;
 import com.bank.project.ProjectBank.dto.Customer;
 import com.bank.project.ProjectBank.dto.Transaction;
 import com.bank.project.ProjectBank.dto.TransactionType;
@@ -40,158 +43,158 @@ public class CustomerService {
 	@Autowired
 	Transactiondao transactiondao;
 
-	
-	public ResponseEntity<Transaction> depositToAccount(int accountId, Transaction transaction)
-	{
+	public ResponseEntity<Transaction> depositToAccount(int accountId, Transaction transaction) {
 		Account account = accountdao.findAccount(accountId);
-		if(account!=null)
-		{
+		if (account != null) {
 			double accountBalance = account.getAccountBalance();
 			accountBalance = accountBalance + transaction.getTransactionAmount();
 			account.getTransaction().add(transaction);
 			transaction.setStatus("success");
-			Transaction saveTransaction = transactiondao.saveTransaction(transaction);			
-			return new ResponseEntity<Transaction>(saveTransaction,HttpStatus.OK);
-		}
-		else throw new AccounNotFoundException("account object not found");
+			Transaction saveTransaction = transactiondao.saveTransaction(transaction);
+			return new ResponseEntity<Transaction>(saveTransaction, HttpStatus.OK);
+		} else
+			throw new AccounNotFoundException("account object not found");
 	}
 
-	
-	public ResponseEntity<Transaction> withdrawFromAccount(int accountId, Transaction transaction)
-	{
+	public ResponseEntity<Transaction> withdrawFromAccount(int accountId, Transaction transaction) {
 		Account account = accountdao.findAccount(accountId);
-		if(account!=null)
-		{
-			if(account.getAccountBalance()>=transaction.getTransactionAmount())
-			{
+		if (account != null) {
+			if (account.getAccountBalance() >= transaction.getTransactionAmount()) {
 				double accountBalance = account.getAccountBalance();
 				accountBalance = accountBalance - transaction.getTransactionAmount();
 				account.getTransaction().add(transaction);
 				transaction.setStatus("success");
 				accountdao.updateAccount(accountId, account);
 				Transaction saveTransaction = transactiondao.saveTransaction(transaction);
-				
-				return new ResponseEntity<Transaction>(saveTransaction ,HttpStatus.OK);
-			}
-			else throw new TransactionNotFoundException("insufficient amount");
-		}
-		else throw new AccounNotFoundException("account object not found");
+
+				return new ResponseEntity<Transaction>(saveTransaction, HttpStatus.OK);
+			} else
+				throw new TransactionNotFoundException("insufficient amount");
+		} else
+			throw new AccounNotFoundException("account object not found");
 	}
-	
-	
+
 	@Transactional
-	public ResponseEntity<Transaction> transferBetweenAccounts(int senderaccount, int receiveraccount, Transaction transaction)
-	{
-		
+	public ResponseEntity<Transaction> transferBetweenAccounts(int senderaccount, int receiveraccount,
+			Transaction transaction) {
+
 		Account sender_account = accountdao.findAccount(senderaccount);
 		Account receiver_account = accountdao.findAccount(receiveraccount);
-		if(sender_account!=null)
-		{
-			if(receiver_account!=null)
-			{
+		if (sender_account != null) {
+			if (receiver_account != null) {
 				double accountBalance_s = sender_account.getAccountBalance();
 				double accountBalance_receiver = receiver_account.getAccountBalance();
-				if(accountBalance_s>=transaction.getTransactionAmount())
-				{
+				if (accountBalance_s >= transaction.getTransactionAmount()) {
 					accountBalance_s = sender_account.getAccountBalance() - transaction.getTransactionAmount();
 					accountBalance_receiver = receiver_account.getAccountBalance() + transaction.getTransactionAmount();
 					sender_account.getTransaction().add(transaction);
 					receiver_account.getTransaction().add(transaction);
 					sender_account.getSentTransactions().add(transaction);
-					
-					
+
 					receiver_account.getTransaction().add(transaction);
 					receiver_account.getReceivedTransactions().add(transaction);
-					
+
 					Transaction saveTransaction = transactiondao.saveTransaction(transaction);
 					accountdao.updateAccount(receiveraccount, receiver_account);
 					accountdao.updateAccount(senderaccount, sender_account);
-					
-					return new ResponseEntity<Transaction>(saveTransaction,HttpStatus.OK);
-				}
-				else throw new TransactionNotFoundException("insufficient balance");
-			}
-			else throw new AccounNotFoundException("receiver account not found");
-		}
-		else throw new AccounNotFoundException("sender account not found");
+
+					return new ResponseEntity<Transaction>(saveTransaction, HttpStatus.OK);
+				} else
+					throw new TransactionNotFoundException("insufficient balance");
+			} else
+				throw new AccounNotFoundException("receiver account not found");
+		} else
+			throw new AccounNotFoundException("sender account not found");
 	}
-	
-	
-    public ResponseEntity<List<Transaction>> getAllTransactionsByAccountId(int accountId)
-    {
-    	Account account = accountdao.findAccount(accountId);
-    	if(account!=null)
-    	{
-    		List<Transaction> transaction = account.getTransaction();
-    		return new ResponseEntity<List<Transaction>>(transaction,HttpStatus.FOUND);
-  
-    	}
-    	else throw new AccounNotFoundException("account object not found");
-    }
-    
-    public ResponseEntity<List<Transaction>> 	getCreditTransactions(int accountId){
-    	
-    	Account account = accountdao.findAccount(accountId);
-    	List<Transaction> newdata = new ArrayList<Transaction>();
-    	if(account!=null)
-    	{
-    		List<Transaction> transaction = account.getTransaction();
-    		for(Transaction t:transaction)
-    		{
-    			if(t.getType()==TransactionType.credit)
-    			{
-    				newdata.add(t);
-    			}
-    		}
-    		
-    		return new ResponseEntity<List<Transaction>>(newdata,HttpStatus.FOUND);
-    	}
-    	
-    	else throw new AccounNotFoundException("account object not found");
-    }
-    
-    
-    public ResponseEntity<List<Transaction>> getDebitTransactions(int accountId){
-    	
-    	Account account = accountdao.findAccount(accountId);
-    	List<Transaction> newdata = new ArrayList<Transaction>();
-    	if(account!=null)
-    	{
-    		List<Transaction> transaction = account.getTransaction();
-    		for(Transaction t:transaction)
-    		{
-    			if(t.getType()==TransactionType.debit)
-    			{
-    				newdata.add(t);
-    			}
-    		}
-    		
-    		return new ResponseEntity<List<Transaction>>(newdata,HttpStatus.FOUND);
-    	}
-    	
-    	else throw new AccounNotFoundException("account object not found");
-    }
-    
-    public ResponseEntity<List<Transaction>> getTransactionsByDateRange(int accountId, LocalDateTime from, LocalDateTime to)
-    {
-    	
-    	Account account = accountdao.findAccount(accountId);
-    	List<Transaction> newdata = new ArrayList<Transaction>();
-    	if(account!=null)
-    	{
-    		List<Transaction> transaction = account.getTransaction();
-    		for(Transaction t:transaction)
-    		{
-    			if(!t.getTimestamp().isBefore(from) && !t.getTimestamp().isAfter(to))
-    			{
-    				newdata.add(t);
-    			}
-    		}
-    		
-    		return new ResponseEntity<List<Transaction>>(newdata,HttpStatus.FOUND);
-    	}
-    	else throw new AccounNotFoundException("account object not found");
-    	
-    }
-    
+
+	public ResponseEntity<List<Transaction>> getAllTransactionsByAccountId(int accountId) {
+		Account account = accountdao.findAccount(accountId);
+		if (account != null) {
+			List<Transaction> transaction = account.getTransaction();
+			return new ResponseEntity<List<Transaction>>(transaction, HttpStatus.FOUND);
+
+		} else
+			throw new AccounNotFoundException("account object not found");
+	}
+
+	public ResponseEntity<List<Transaction>> getCreditTransactions(int accountId) {
+
+		Account account = accountdao.findAccount(accountId);
+		List<Transaction> newdata = new ArrayList<Transaction>();
+		if (account != null) {
+			List<Transaction> transaction = account.getTransaction();
+			for (Transaction t : transaction) {
+				if (t.getType() == TransactionType.credit) {
+					newdata.add(t);
+				}
+			}
+
+			return new ResponseEntity<List<Transaction>>(newdata, HttpStatus.FOUND);
+		}
+
+		else
+			throw new AccounNotFoundException("account object not found");
+	}
+
+	public ResponseEntity<List<Transaction>> getDebitTransactions(int accountId) {
+
+		Account account = accountdao.findAccount(accountId);
+		List<Transaction> newdata = new ArrayList<Transaction>();
+		if (account != null) {
+			List<Transaction> transaction = account.getTransaction();
+			for (Transaction t : transaction) {
+				if (t.getType() == TransactionType.debit) {
+					newdata.add(t);
+				}
+			}
+
+			return new ResponseEntity<List<Transaction>>(newdata, HttpStatus.FOUND);
+		}
+
+		else
+			throw new AccounNotFoundException("account object not found");
+	}
+
+	public ResponseEntity<List<Transaction>> getTransactionsByDateRange(int accountId, LocalDateTime from,
+			LocalDateTime to) {
+
+		Account account = accountdao.findAccount(accountId);
+		List<Transaction> newdata = new ArrayList<Transaction>();
+		if (account != null) {
+			List<Transaction> transaction = account.getTransaction();
+			for (Transaction t : transaction) {
+				if (!t.getTimestamp().isBefore(from) && !t.getTimestamp().isAfter(to)) {
+					newdata.add(t);
+				}
+			}
+
+			return new ResponseEntity<List<Transaction>>(newdata, HttpStatus.FOUND);
+		} else
+			throw new AccounNotFoundException("account object not found");
+
+	}
+
+	public ResponseEntity<List<Transaction>> filterTransactionsByAmountRange(double startamount, double endamount,
+			int customerid, AccountType accountType) {
+
+		Customer customerdata = customerdao.findCustomer(customerid);
+		List<Transaction> newdata = new ArrayList<Transaction>();
+		if (customerdata != null) {
+			List<Account> accounts = customerdata.getAccounts();
+			for (Account a : accounts) {
+				if (a.getAccountype() == accountType) {
+					List<Transaction> transaction = a.getTransaction();
+					for (Transaction t : transaction) {
+						newdata.add(t);
+					}
+
+				}
+			}
+
+			return new ResponseEntity<List<Transaction>>(newdata, HttpStatus.FOUND);
+		} else
+			throw new CustomerNotFoundException("customer object not found");
+
+	}
+
 }

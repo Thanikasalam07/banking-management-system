@@ -13,5 +13,7 @@ import com.bank.project.ProjectBank.dto.TransactionType;
 public interface TransactionRepository extends JpaRepository<Transaction, Integer> {
 	@Query("select t from Transaction t where t.type = ?1")
 	public List<Transaction> findByTransactionType(TransactionType type);
+	
+	
 
 }
